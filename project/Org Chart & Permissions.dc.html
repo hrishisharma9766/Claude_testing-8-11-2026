@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/evaa-design-system-019e2631-6f46-73e2-967b-b550c1a8d11f/theme.css">
+  <script src="_ds/evaa-design-system-019e2631-6f46-73e2-967b-b550c1a8d11f/_ds_bundle.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Archivo:wght@100&display=swap" rel="stylesheet">
+  <style>
+    body{margin:0;background:var(--colors-primitive-color-tokens-neutrals-bkg-100);font-family:'DM Sans',sans-serif;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);}
+    a{color:var(--colors-primitive-color-tokens-teal-700);text-decoration:none;}
+    a:hover{color:var(--colors-primitive-color-tokens-teal-800);}
+  </style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column;background:var(--colors-primitive-color-tokens-neutrals-bkg-100);opacity:{{ pageOpacity }};transition:opacity 200ms ease;">
+
+  <nav style="display:flex;gap:10px;padding:16px 32px;background:#fff;border-bottom:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-300);" data-screen-label="Org Chart and Permissions">
+    <a href="./Staff Directory.dc.html" onclick="{{ goToStaffDirectory }}" style="padding:9px 20px;border-radius:9999px;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);font-weight:600;font-size:13px;transition:background 200ms ease,color 200ms ease;">Staff Directory</a>
+    <span style="padding:9px 20px;border-radius:9999px;background:var(--colors-primitive-color-tokens-teal-100);color:var(--colors-primitive-color-tokens-teal-800);font-weight:800;font-size:13px;">Org Chart &amp; Permissions</span>
+  </nav>
+
+  <main style="flex:1;padding:28px 32px 64px;max-width:1560px;margin:0 auto;width:100%;box-sizing:border-box;">
+
+    <header style="margin-bottom:22px;">
+      <h1 style="margin:0 0 6px;font-size:28px;font-weight:600;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">Org Chart &amp; Permissions</h1>
+      <p style="margin:0;font-size:14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);">Reporting structure and role-based access for Northlane Retail Group</p>
+    </header>
+
+    <div style="display:flex;gap:20px;border-bottom:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-300);margin-bottom:26px;">
+      <button onclick="{{ showOrgChart }}" style="border:none;background:transparent;padding:0 0 14px;font-size:14px;font-weight:700;cursor:pointer;color:{{ orgTabColor }};border-bottom:2px solid {{ orgTabBorder }};">Org Chart</button>
+      <button onclick="{{ showPermissions }}" style="border:none;background:transparent;padding:0 0 14px;font-size:14px;font-weight:700;cursor:pointer;color:{{ permTabColor }};border-bottom:2px solid {{ permTabBorder }};">Roles &amp; Permissions</button>
+    </div>
+
+    <sc-if value="{{ isOrgChart }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#fff;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);border-radius:16px;padding:40px 24px;overflow-x:auto;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0;min-width:960px;">
+
+          <div style="{{ nodeBrandStyle }}">
+            <div style="font-weight:700;font-size:14px;">{{ ceo.name }}</div>
+            <div style="font-size:12px;opacity:.85;">{{ ceo.title }}</div>
+          </div>
+          <div style="width:2px;height:28px;background:var(--colors-primitive-color-tokens-neutrals-bkg-400);"></div>
+          <div style="width:70%;height:2px;background:var(--colors-primitive-color-tokens-neutrals-bkg-400);"></div>
+
+          <div style="display:flex;justify-content:space-between;width:70%;">
+            <sc-for list="{{ directors }}" as="dir" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;align-items:center;">
+                <div style="width:2px;height:24px;background:var(--colors-primitive-color-tokens-neutrals-bkg-400);"></div>
+                <div style="{{ dir.nodeStyle }}">
+                  <div style="font-weight:700;font-size:13px;">{{ dir.name }}</div>
+                  <div style="font-size:11.5px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);">{{ dir.title }}</div>
+                </div>
+                <div style="width:2px;height:20px;background:var(--colors-primitive-color-tokens-neutrals-bkg-400);"></div>
+                <div style="background:var(--colors-primitive-color-tokens-neutrals-bkg-100);border:1px dashed var(--colors-primitive-color-tokens-neutrals-bkg-400);border-radius:13px;padding:8px 16px;font-size:11.5px;font-weight:600;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);white-space:nowrap;">{{ dir.teamSize }} staff</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPermissions }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#fff;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);border-radius:13px;overflow:hidden;">
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:13.5px;">
+            <thead>
+              <tr style="background:var(--colors-primitive-color-tokens-teal-700);">
+                <th style="text-align:left;padding:14px 16px;color:#fff;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.03em;min-width:180px;">Role</th>
+                <sc-for list="{{ permissionCols }}" as="col" hint-placeholder-count="6">
+                  <th style="text-align:center;padding:14px 10px;color:#fff;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.02em;">{{ col }}</th>
+                </sc-for>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ roleRows }}" as="rr" hint-placeholder-count="5">
+                <tr style="border-top:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-300);background:{{ rr.rowBg }};">
+                  <td style="padding:14px 16px;">
+                    <div style="font-weight:700;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">{{ rr.role }}</div>
+                    <div style="font-size:11.5px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);">{{ rr.count }} people</div>
+                  </td>
+                  <sc-for list="{{ rr.cells }}" as="cell" hint-placeholder-count="6">
+                    <td style="padding:14px 10px;text-align:center;">
+                      <x-import component-from-global-scope="EvaaDesignSystem_019e26.Checkbox" hint-size="18px,18px" checked="{{ cell.on }}" on-change="{{ cell.toggle }}"></x-import>
+                    </td>
+                  </sc-for>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:16px 20px;border-top:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-300);font-size:12.5px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);">Toggle checkboxes to grant or revoke a permission for the role. Changes apply to all staff assigned that role.</div>
+      </div>
+    </sc-if>
+
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const DIRECTORS_SEED = [
+  { id: 'sales', name: 'Maria Alvarez', title: 'Director, Sales', teamSize: 5 },
+  { id: 'ops', name: 'Priya Nair', title: 'Director, Operations', teamSize: 6 },
+  { id: 'support', name: 'Grace Okafor', title: 'Director, Customer Support', teamSize: 2 },
+  { id: 'finance', name: 'Ben Kowalski', title: 'Director, Finance', teamSize: 2 },
+];
+
+const PERMISSION_COLS = ['View Staff', 'Edit Staff', 'Add/Remove Staff', 'View Salary', 'Manage Schedules', 'Export Reports'];
+
+const ROLES_SEED = [
+  { role: 'Administrator', count: 2, perms: [true, true, true, true, true, true] },
+  { role: 'Manager', count: 6, perms: [true, true, true, false, true, true] },
+  { role: 'HR Coordinator', count: 2, perms: [true, true, false, true, true, false] },
+  { role: 'Staff', count: 22, perms: [true, false, false, false, false, false] },
+  { role: 'Read-only / Auditor', count: 3, perms: [true, false, false, false, false, true] },
+];
+
+class Component extends DCLogic {
+  state = {
+    pageOpacity: 0,
+    tab: 'org',
+    roles: ROLES_SEED.map(r => ({ ...r, perms: [...r.perms] })),
+  };
+
+  componentDidMount() { requestAnimationFrame(() => this.setState({ pageOpacity: 1 })); }
+  goToStaffDirectory = (e) => {
+    e.preventDefault();
+    const url = e.currentTarget.href;
+    this.setState({ pageOpacity: 0 });
+    setTimeout(() => { window.location.href = url; }, 200);
+  };
+
+  showOrgChart = () => this.setState({ tab: 'org' });
+  showPermissions = () => this.setState({ tab: 'permissions' });
+
+  togglePerm(roleIdx, permIdx) {
+    this.setState(s => {
+      const roles = s.roles.map((r, i) => {
+        if (i !== roleIdx) return r;
+        const perms = [...r.perms];
+        perms[permIdx] = !perms[permIdx];
+        return { ...r, perms };
+      });
+      return { roles };
+    });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const teal = 'var(--colors-primitive-color-tokens-teal-800)';
+    const tealBorder = 'var(--colors-primitive-color-tokens-teal-700)';
+    const gray = 'var(--colors-primitive-color-tokens-neutrals-bkg-600)';
+
+    const directors = DIRECTORS_SEED.map(d => ({
+      ...d,
+      nodeStyle: 'background:#fff;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);border-radius:13px;padding:12px 18px;min-width:150px;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,0.06);',
+    }));
+
+    const roleRows = s.roles.map((r, ri) => ({
+      role: r.role, count: r.count,
+      rowBg: ri % 2 ? 'var(--colors-primitive-color-tokens-neutrals-bkg-50)' : '#fff',
+      cells: r.perms.map((on, pi) => ({ on, toggle: () => this.togglePerm(ri, pi) })),
+    }));
+
+    return {
+      pageOpacity: s.pageOpacity, goToStaffDirectory: this.goToStaffDirectory,
+      enterpriseOptions: [{ value: 'northlane', label: 'Northlane Retail Group' }],
+      productOptions: [{ value: 'staff-management', label: 'Staff Management' }],
+      isOrgChart: s.tab === 'org', isPermissions: s.tab === 'permissions',
+      showOrgChart: this.showOrgChart, showPermissions: this.showPermissions,
+      orgTabColor: s.tab === 'org' ? teal : gray, orgTabBorder: s.tab === 'org' ? tealBorder : 'transparent',
+      permTabColor: s.tab === 'permissions' ? teal : gray, permTabBorder: s.tab === 'permissions' ? tealBorder : 'transparent',
+      ceo: { name: 'Renee Ashford', title: 'Chief Executive Officer' },
+      nodeBrandStyle: 'background:var(--colors-primitive-color-tokens-teal-700);color:#fff;border-radius:13px;padding:14px 24px;min-width:180px;text-align:center;',
+      directors,
+      permissionCols: PERMISSION_COLS,
+      roleRows,
+    };
+  }
+}
+</script>
+</body>
+</html>

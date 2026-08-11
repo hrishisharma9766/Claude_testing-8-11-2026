@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/evaa-design-system-019e2631-6f46-73e2-967b-b550c1a8d11f/theme.css">
+  <script src="_ds/evaa-design-system-019e2631-6f46-73e2-967b-b550c1a8d11f/_ds_bundle.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Archivo:wght@100&display=swap" rel="stylesheet">
+  <style>
+    body{margin:0;background:var(--colors-primitive-color-tokens-neutrals-bkg-100);font-family:'DM Sans',sans-serif;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);}
+    a{color:var(--colors-primitive-color-tokens-teal-700);text-decoration:none;}
+    a:hover{color:var(--colors-primitive-color-tokens-teal-800);}
+    input,select{font-family:'DM Sans',sans-serif;}
+    ::placeholder{color:var(--colors-primitive-color-tokens-neutrals-bkg-500);}
+  </style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column;background:var(--colors-primitive-color-tokens-neutrals-bkg-100);opacity:{{ pageOpacity }};transition:opacity 200ms ease;">
+
+  <nav style="display:flex;gap:10px;padding:16px 32px;background:#fff;border-bottom:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-300);" data-screen-label="Staff Directory">
+    <span style="padding:9px 20px;border-radius:9999px;background:var(--colors-primitive-color-tokens-teal-100);color:var(--colors-primitive-color-tokens-teal-800);font-weight:800;font-size:13px;">Staff Directory</span>
+    <a href="./Org Chart %26 Permissions.dc.html" onclick="{{ goToOrgChart }}" style="padding:9px 20px;border-radius:9999px;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);font-weight:600;font-size:13px;transition:background 200ms ease,color 200ms ease;">Org Chart &amp; Permissions</a>
+  </nav>
+
+  <main style="flex:1;padding:28px 32px 64px;max-width:1560px;margin:0 auto;width:100%;box-sizing:border-box;">
+
+    <header style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:22px;">
+      <div>
+        <h1 style="margin:0 0 6px;font-size:28px;font-weight:600;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">Staff Directory</h1>
+        <p style="margin:0;font-size:14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);">{{ totalStaff }} staff &middot; {{ deptCount }} departments &middot; {{ locCount }} locations</p>
+      </div>
+      <div style="display:flex;gap:10px;flex:none;">
+        <button style="display:flex;align-items:center;gap:8px;padding:0 20px;height:44px;border-radius:9999px;background:#fff;border:1px solid var(--colors-primitive-color-tokens-teal-700);color:var(--colors-primitive-color-tokens-neutrals-bkg-700);font-weight:800;font-size:14px;cursor:pointer;">Export</button>
+        <button onclick="{{ openAddModal }}" style="display:flex;align-items:center;gap:8px;padding:0 22px;height:44px;border-radius:9999px;background:var(--colors-primitive-color-tokens-teal-700);border:none;color:#fff;font-weight:800;font-size:14px;cursor:pointer;">+ Add Staff</button>
+      </div>
+    </header>
+
+    <section style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
+      <div style="background:#fff;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);border-radius:13px;padding:18px 20px;">
+        <div style="font-size:13px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);font-weight:500;margin-bottom:10px;">Total Staff</div>
+        <div style="font-size:30px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">{{ totalStaff }}</div>
+      </div>
+      <div style="background:var(--colors-primitive-color-tokens-teal-100);border:2px solid var(--colors-primitive-color-tokens-teal-600);border-radius:13px;padding:18px 20px;">
+        <div style="font-size:13px;color:var(--colors-primitive-color-tokens-teal-800);font-weight:500;margin-bottom:10px;">Active</div>
+        <div style="font-size:30px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--colors-primitive-color-tokens-teal-800);">{{ activeCount }}</div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);border-radius:13px;padding:18px 20px;">
+        <div style="font-size:13px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);font-weight:500;margin-bottom:10px;">On Leave</div>
+        <div style="font-size:30px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--colors-primitive-color-tokens-orange-600);">{{ onLeaveCount }}</div>
+      </div>
+      <div style="background:var(--colors-primitive-color-tokens-fuscia-50);border:1px solid var(--colors-primitive-color-tokens-fuscia-300);border-radius:13px;padding:18px 20px;">
+        <div style="font-size:13px;color:var(--colors-primitive-color-tokens-fuscia-700);font-weight:500;margin-bottom:10px;">Departments</div>
+        <div style="font-size:30px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--colors-primitive-color-tokens-fuscia-700);">{{ deptCount }}</div>
+      </div>
+    </section>
+
+    <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--colors-primitive-color-tokens-neutrals-bkg-800);color:#fff;border-radius:13px;padding:12px 20px;margin-bottom:16px;">
+        <span style="font-size:14px;font-weight:600;">{{ selectedCount }} selected</span>
+        <div style="display:flex;gap:10px;">
+          <button onclick="{{ bulkDeactivate }}" style="padding:8px 16px;border-radius:9999px;background:transparent;border:1px solid rgba(255,255,255,0.4);color:#fff;font-size:13px;font-weight:700;cursor:pointer;">Mark On Leave</button>
+          <button onclick="{{ bulkDelete }}" style="padding:8px 16px;border-radius:9999px;background:var(--colors-primitive-color-tokens-red-600);border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;">Remove</button>
+          <button onclick="{{ clearSelection }}" style="padding:8px 16px;border-radius:9999px;background:transparent;border:1px solid rgba(255,255,255,0.4);color:#fff;font-size:13px;font-weight:700;cursor:pointer;">Clear</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <section style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:#fff;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);border-radius:9999px;padding:8px 10px;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:220px;background:var(--colors-primitive-color-tokens-neutrals-bkg-100);border-radius:9999px;padding:8px 16px;">
+        <svg width="16" height="16" viewBox="0 0 21 21" fill="none" stroke="var(--colors-primitive-color-tokens-neutrals-bkg-600)" stroke-width="1.7"><circle cx="9" cy="9" r="6.5"></circle><path d="M14 14l5 5"></path></svg>
+        <input value="{{ query }}" oninput="{{ setQuery }}" placeholder="Search by name, role, or email&hellip;" style="border:none;outline:none;background:transparent;font-size:14px;width:100%;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);"/>
+      </div>
+      <x-import component-from-global-scope="EvaaDesignSystem_019e26.SingleSelectDropDown" hint-size="180px,44px" label="" placeholder="Department" options="{{ deptOptions }}" value="{{ deptFilter }}" on-change="{{ setDeptFilter }}" size="md"></x-import>
+      <x-import component-from-global-scope="EvaaDesignSystem_019e26.SingleSelectDropDown" hint-size="170px,44px" label="" placeholder="Location" options="{{ locOptions }}" value="{{ locFilter }}" on-change="{{ setLocFilter }}" size="md"></x-import>
+      <div style="display:flex;gap:6px;">
+        <x-import component-from-global-scope="EvaaDesignSystem_019e26.FilterButton" hint-size="auto,36px" selected="{{ statusAllSel }}" on-click="{{ setStatusAll }}">All</x-import>
+        <x-import component-from-global-scope="EvaaDesignSystem_019e26.FilterButton" hint-size="auto,36px" selected="{{ statusActiveSel }}" on-click="{{ setStatusActive }}">Active</x-import>
+        <x-import component-from-global-scope="EvaaDesignSystem_019e26.FilterButton" hint-size="auto,36px" selected="{{ statusLeaveSel }}" on-click="{{ setStatusLeave }}">On Leave</x-import>
+      </div>
+    </section>
+
+    <div style="background:#fff;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);border-radius:13px;overflow:hidden;">
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:13.5px;">
+          <thead>
+            <tr style="background:var(--colors-primitive-color-tokens-teal-700);">
+              <th style="width:44px;padding:12px 14px;"><x-import component-from-global-scope="EvaaDesignSystem_019e26.Checkbox" hint-size="18px,18px" checked="{{ allSelected }}" on-change="{{ toggleSelectAll }}"></x-import></th>
+              <th onclick="{{ sortByName }}" style="text-align:left;padding:12px 14px;color:#fff;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;white-space:nowrap;">Name {{ arrowName }}</th>
+              <th onclick="{{ sortByRole }}" style="text-align:left;padding:12px 14px;color:#fff;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;white-space:nowrap;">Role {{ arrowRole }}</th>
+              <th onclick="{{ sortByDept }}" style="text-align:left;padding:12px 14px;color:#fff;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;white-space:nowrap;">Department {{ arrowDept }}</th>
+              <th style="text-align:left;padding:12px 14px;color:#fff;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;">Location</th>
+              <th style="text-align:left;padding:12px 14px;color:#fff;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;">Schedule</th>
+              <th onclick="{{ sortBySalary }}" style="text-align:right;padding:12px 14px;color:#fff;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;white-space:nowrap;">Salary {{ arrowSalary }}</th>
+              <th style="text-align:left;padding:12px 14px;color:#fff;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;">Status</th>
+              <th onclick="{{ sortByHire }}" style="text-align:left;padding:12px 14px;color:#fff;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;white-space:nowrap;">Hired {{ arrowHire }}</th>
+              <th style="width:56px;padding:12px 14px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+              <tr onclick="{{ r.openRow }}" style="border-top:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-300);cursor:pointer;background:{{ r.rowBg }};">
+                <td onclick="{{ stopProp }}" style="padding:10px 14px;"><x-import component-from-global-scope="EvaaDesignSystem_019e26.Checkbox" hint-size="18px,18px" checked="{{ r.isSelected }}" on-change="{{ r.toggleSelect }}"></x-import></td>
+                <td style="padding:10px 14px;">
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="width:32px;height:32px;border-radius:9999px;background:var(--colors-primitive-color-tokens-teal-100);color:var(--colors-primitive-color-tokens-teal-800);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:none;">{{ r.initials }}</span>
+                    <div>
+                      <div style="font-weight:600;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">{{ r.name }}</div>
+                      <div style="font-size:12px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);">{{ r.email }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="padding:10px 14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">{{ r.role }}</td>
+                <td style="padding:10px 14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">{{ r.department }}</td>
+                <td style="padding:10px 14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">{{ r.location }}</td>
+                <td style="padding:10px 14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">{{ r.schedule }}</td>
+                <td style="padding:10px 14px;text-align:right;font-variant-numeric:tabular-nums;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">{{ r.salaryDisplay }}</td>
+                <td style="padding:10px 14px;"><span style="display:inline-block;padding:4px 12px;border-radius:9999px;font-size:11px;font-weight:700;background:{{ r.statusBg }};color:{{ r.statusColor }};">{{ r.status }}</span></td>
+                <td style="padding:10px 14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);white-space:nowrap;">{{ r.hireDateDisplay }}</td>
+                <td onclick="{{ stopProp }}" style="padding:10px 14px;">
+                  <button onclick="{{ r.openRow }}" title="View" style="width:28px;height:28px;border-radius:9999px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">
+                    <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="7" cy="7" r="2"></circle><path d="M1 7s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4Z"></path></svg>
+                  </button>
+                </td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-300);font-size:13px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);">
+        <span>Showing {{ rowCount }} of {{ totalStaff }}</span>
+        <span>Northlane Retail Group</span>
+      </div>
+    </div>
+  </main>
+
+  <sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ false }}">
+    <div onclick="{{ closeDrawer }}" style="position:fixed;inset:0;background:rgba(48,48,48,0.4);z-index:40;"></div>
+    <aside style="position:fixed;top:0;right:0;height:100%;width:420px;background:#fff;z-index:41;box-shadow:-4px 0 24px rgba(0,0,0,0.14);display:flex;flex-direction:column;">
+      <div style="padding:24px;border-bottom:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-300);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+        <div style="display:flex;gap:14px;align-items:center;">
+          <span style="width:52px;height:52px;border-radius:9999px;background:var(--colors-primitive-color-tokens-teal-100);color:var(--colors-primitive-color-tokens-teal-800);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex:none;">{{ drawerInitials }}</span>
+          <div>
+            <div style="font-size:18px;font-weight:600;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">{{ drawerName }}</div>
+            <div style="font-size:13px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);">{{ drawerRole }}</div>
+          </div>
+        </div>
+        <button onclick="{{ closeDrawer }}" style="border:none;background:transparent;cursor:pointer;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);font-size:20px;line-height:1;padding:4px;">&times;</button>
+      </div>
+      <div style="display:flex;padding:0 24px;border-bottom:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-300);gap:20px;">
+        <button onclick="{{ setTabOverview }}" style="border:none;background:transparent;padding:14px 0;font-size:13px;font-weight:700;cursor:pointer;color:{{ tabOverviewColor }};border-bottom:2px solid {{ tabOverviewBorder }};">Overview</button>
+        <button onclick="{{ setTabSchedule }}" style="border:none;background:transparent;padding:14px 0;font-size:13px;font-weight:700;cursor:pointer;color:{{ tabScheduleColor }};border-bottom:2px solid {{ tabScheduleBorder }};">Schedule</button>
+        <button onclick="{{ setTabComp }}" style="border:none;background:transparent;padding:14px 0;font-size:13px;font-weight:700;cursor:pointer;color:{{ tabCompColor }};border-bottom:2px solid {{ tabCompBorder }};">Compensation</button>
+      </div>
+      <div style="padding:24px;overflow-y:auto;flex:1;">
+        <sc-if value="{{ isTabOverview }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div><div style="font-size:11px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Status</div><span style="display:inline-block;padding:4px 12px;border-radius:9999px;font-size:11px;font-weight:700;background:{{ drawerStatusBg }};color:{{ drawerStatusColor }};">{{ drawerStatus }}</span></div>
+            <div><div style="font-size:11px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Department</div><div style="font-size:14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">{{ drawerDept }}</div></div>
+            <div><div style="font-size:11px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Location</div><div style="font-size:14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">{{ drawerLocation }}</div></div>
+            <div><div style="font-size:11px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Email</div><div style="font-size:14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">{{ drawerEmail }}</div></div>
+            <div><div style="font-size:11px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Phone</div><div style="font-size:14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">{{ drawerPhone }}</div></div>
+            <div><div style="font-size:11px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Hire date</div><div style="font-size:14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">{{ drawerHireDateDisplay }}</div></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isTabSchedule }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div><div style="font-size:11px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Shift pattern</div><div style="font-size:14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">{{ drawerSchedule }}</div></div>
+            <div><div style="font-size:11px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Location</div><div style="font-size:14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">{{ drawerLocation }}</div></div>
+            <div style="background:var(--colors-primitive-color-tokens-neutrals-bkg-100);border-radius:13px;padding:14px 16px;font-size:13px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);">Weekly schedule editing is available from the shift planner.</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isTabComp }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div><div style="font-size:11px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Annual salary</div><div style="font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">{{ drawerSalaryDisplay }}</div></div>
+            <div><div style="font-size:11px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Pay type</div><div style="font-size:14px;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">Salaried &middot; biweekly</div></div>
+          </div>
+        </sc-if>
+      </div>
+    </aside>
+  </sc-if>
+
+  <sc-if value="{{ showAddModal }}" hint-placeholder-val="{{ false }}">
+    <div onclick="{{ closeAddModal }}" style="position:fixed;inset:0;background:rgba(48,48,48,0.45);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;">
+      <div onclick="{{ stopProp }}" style="background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;">
+        <h2 style="margin:0 0 4px;font-size:20px;font-weight:600;color:var(--colors-primitive-color-tokens-neutrals-bkg-800);">Add Staff</h2>
+        <p style="margin:0 0 20px;font-size:13px;color:var(--colors-primitive-color-tokens-neutrals-bkg-600);">Add a new team member to the directory.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);grid-column:1/3;">Full name
+            <input value="{{ addName }}" oninput="{{ setAddName }}" placeholder="Jordan Blake" style="height:40px;border-radius:13px;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);padding:0 14px;font-size:14px;outline:none;"/>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);grid-column:1/3;">Email
+            <input value="{{ addEmail }}" oninput="{{ setAddEmail }}" placeholder="jordan.blake@northlane.com" style="height:40px;border-radius:13px;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);padding:0 14px;font-size:14px;outline:none;"/>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">Role / Title
+            <input value="{{ addRole }}" oninput="{{ setAddRole }}" placeholder="Sales Associate" style="height:40px;border-radius:13px;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);padding:0 14px;font-size:14px;outline:none;"/>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">Department
+            <select value="{{ addDept }}" onchange="{{ setAddDept }}" style="height:40px;border-radius:13px;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);padding:0 12px;font-size:14px;outline:none;background:#fff;">
+              <sc-for list="{{ deptSelectOptions }}" as="opt" hint-placeholder-count="6"><option value="{{ opt.value }}">{{ opt.label }}</option></sc-for>
+            </select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">Location
+            <select value="{{ addLoc }}" onchange="{{ setAddLoc }}" style="height:40px;border-radius:13px;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);padding:0 12px;font-size:14px;outline:none;background:#fff;">
+              <sc-for list="{{ locSelectOptions }}" as="opt" hint-placeholder-count="4"><option value="{{ opt.value }}">{{ opt.label }}</option></sc-for>
+            </select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">Status
+            <select value="{{ addStatus }}" onchange="{{ setAddStatus }}" style="height:40px;border-radius:13px;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);padding:0 12px;font-size:14px;outline:none;background:#fff;">
+              <option value="Active">Active</option>
+              <option value="On Leave">On Leave</option>
+            </select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">Schedule / Shift
+            <input value="{{ addSchedule }}" oninput="{{ setAddSchedule }}" placeholder="Mon&ndash;Fri, 9am&ndash;5pm" style="height:40px;border-radius:13px;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);padding:0 14px;font-size:14px;outline:none;"/>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">Hire date
+            <input type="date" value="{{ addHire }}" oninput="{{ setAddHire }}" style="height:40px;border-radius:13px;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);padding:0 12px;font-size:14px;outline:none;"/>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--colors-primitive-color-tokens-neutrals-bkg-700);">Annual salary
+            <input value="{{ addSalary }}" oninput="{{ setAddSalary }}" placeholder="55000" style="height:40px;border-radius:13px;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);padding:0 14px;font-size:14px;outline:none;"/>
+          </label>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:24px;">
+          <button onclick="{{ closeAddModal }}" style="height:44px;padding:0 20px;border-radius:9999px;background:#fff;border:1px solid var(--colors-primitive-color-tokens-neutrals-bkg-400);color:var(--colors-primitive-color-tokens-neutrals-bkg-700);font-weight:800;font-size:14px;cursor:pointer;">Cancel</button>
+          <button onclick="{{ submitAdd }}" style="height:44px;padding:0 22px;border-radius:9999px;background:var(--colors-primitive-color-tokens-teal-700);border:none;color:#fff;font-weight:800;font-size:14px;cursor:pointer;">Save Staff</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const DEPARTMENTS = ['Sales', 'Operations', 'Customer Support', 'Warehouse', 'Finance', 'HR'];
+const LOCATIONS = ['Headquarters \u2013 Denver', 'Chicago Hub', 'Austin Store', 'Remote'];
+
+const STATUS_STYLES = {
+  'Active': { bg: 'var(--colors-primitive-color-tokens-lime-100)', color: 'var(--colors-primitive-color-tokens-lime-800)' },
+  'On Leave': { bg: 'var(--colors-primitive-color-tokens-orange-100)', color: 'var(--colors-primitive-color-tokens-orange-700)' },
+  'Terminated': { bg: 'var(--colors-primitive-color-tokens-red-100)', color: 'var(--colors-primitive-color-tokens-red-700)' },
+};
+
+function initials(name) {
+  return name.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase();
+}
+function fmtSalary(n) {
+  return '$' + Number(n).toLocaleString('en-US');
+}
+function fmtDate(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  return String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + '-' + d.getFullYear();
+}
+
+const SEED = [
+  { id: 1, name: 'Maria Alvarez', email: 'maria.alvarez@northlane.com', phone: '(303) 555-0142', role: 'Store Manager', department: 'Sales', location: 'Headquarters \u2013 Denver', status: 'Active', schedule: 'Mon\u2013Fri, 9am\u20135pm', salary: 78000, hireDate: '2019-03-11' },
+  { id: 2, name: 'Devon Carter', email: 'devon.carter@northlane.com', phone: '(303) 555-0198', role: 'Sales Associate', department: 'Sales', location: 'Headquarters \u2013 Denver', status: 'Active', schedule: 'Tue\u2013Sat, 10am\u20136pm', salary: 42000, hireDate: '2022-06-02' },
+  { id: 3, name: 'Priya Nair', email: 'priya.nair@northlane.com', phone: '(312) 555-0110', role: 'Operations Lead', department: 'Operations', location: 'Chicago Hub', status: 'Active', schedule: 'Mon\u2013Fri, 8am\u20134pm', salary: 71000, hireDate: '2020-01-15' },
+  { id: 4, name: 'Jamal Whitfield', email: 'jamal.whitfield@northlane.com', phone: '(312) 555-0177', role: 'Warehouse Associate', department: 'Warehouse', location: 'Chicago Hub', status: 'On Leave', schedule: 'Mon\u2013Fri, 6am\u20132pm', salary: 39500, hireDate: '2021-09-20' },
+  { id: 5, name: 'Emily Sato', email: 'emily.sato@northlane.com', phone: '(512) 555-0163', role: 'Customer Support Rep', department: 'Customer Support', location: 'Austin Store', status: 'Active', schedule: 'Mon\u2013Fri, 11am\u20137pm', salary: 41000, hireDate: '2023-02-27' },
+  { id: 6, name: 'Carlos Mendez', email: 'carlos.mendez@northlane.com', phone: '(512) 555-0184', role: 'Finance Analyst', department: 'Finance', location: 'Headquarters \u2013 Denver', status: 'Active', schedule: 'Mon\u2013Fri, 9am\u20135pm', salary: 68000, hireDate: '2018-11-05' },
+  { id: 7, name: 'Sarah Klein', email: 'sarah.klein@northlane.com', phone: '(303) 555-0121', role: 'HR Coordinator', department: 'HR', location: 'Headquarters \u2013 Denver', status: 'Active', schedule: 'Mon\u2013Fri, 9am\u20135pm', salary: 54000, hireDate: '2021-04-19' },
+  { id: 8, name: 'Tyler Brooks', email: 'tyler.brooks@northlane.com', phone: '(512) 555-0199', role: 'Warehouse Supervisor', department: 'Warehouse', location: 'Austin Store', status: 'Active', schedule: 'Mon\u2013Fri, 6am\u20132pm', salary: 58000, hireDate: '2017-08-08' },
+  { id: 9, name: 'Nina Petrova', email: 'nina.petrova@northlane.com', phone: '(303) 555-0155', role: 'Sales Associate', department: 'Sales', location: 'Remote', status: 'On Leave', schedule: 'Wed\u2013Sun, 10am\u20136pm', salary: 40500, hireDate: '2022-10-10' },
+  { id: 10, name: 'Owen Fitzgerald', email: 'owen.fitzgerald@northlane.com', phone: '(312) 555-0133', role: 'Operations Analyst', department: 'Operations', location: 'Chicago Hub', status: 'Active', schedule: 'Mon\u2013Fri, 8am\u20134pm', salary: 61000, hireDate: '2020-07-01' },
+  { id: 11, name: 'Grace Okafor', email: 'grace.okafor@northlane.com', phone: '(512) 555-0148', role: 'Customer Support Lead', department: 'Customer Support', location: 'Austin Store', status: 'Active', schedule: 'Mon\u2013Fri, 11am\u20137pm', salary: 52000, hireDate: '2019-05-23' },
+  { id: 12, name: 'Ben Kowalski', email: 'ben.kowalski@northlane.com', phone: '(303) 555-0167', role: 'Finance Manager', department: 'Finance', location: 'Headquarters \u2013 Denver', status: 'Active', schedule: 'Mon\u2013Fri, 9am\u20135pm', salary: 89000, hireDate: '2016-02-14' },
+  { id: 13, name: 'Alicia Moreno', email: 'alicia.moreno@northlane.com', phone: '(303) 555-0189', role: 'HR Generalist', department: 'HR', location: 'Remote', status: 'Terminated', schedule: 'Mon\u2013Fri, 9am\u20135pm', salary: 49000, hireDate: '2020-12-01' },
+  { id: 14, name: 'Marcus Lee', email: 'marcus.lee@northlane.com', phone: '(312) 555-0122', role: 'Warehouse Associate', department: 'Warehouse', location: 'Chicago Hub', status: 'Active', schedule: 'Mon\u2013Fri, 6am\u20132pm', salary: 38000, hireDate: '2023-06-19' },
+  { id: 15, name: 'Hannah Reyes', email: 'hannah.reyes@northlane.com', phone: '(512) 555-0176', role: 'Sales Associate', department: 'Sales', location: 'Austin Store', status: 'Active', schedule: 'Tue\u2013Sat, 10am\u20136pm', salary: 41500, hireDate: '2021-01-11' },
+  { id: 16, name: 'Ibrahim Haddad', email: 'ibrahim.haddad@northlane.com', phone: '(303) 555-0193', role: 'Operations Coordinator', department: 'Operations', location: 'Headquarters \u2013 Denver', status: 'Active', schedule: 'Mon\u2013Fri, 8am\u20134pm', salary: 47000, hireDate: '2022-03-08' },
+];
+
+class Component extends DCLogic {
+  state = {
+    pageOpacity: 0,
+    staff: SEED,
+    query: '',
+    deptFilter: 'All',
+    locFilter: 'All',
+    statusFilter: 'All',
+    selected: [],
+    sortKey: 'name',
+    sortDir: 'asc',
+    drawerId: null,
+    drawerTab: 'overview',
+    showAddModal: false,
+    addName: '', addEmail: '', addRole: '', addDept: DEPARTMENTS[0], addLoc: LOCATIONS[0],
+    addStatus: 'Active', addSchedule: '', addHire: '', addSalary: '',
+  };
+
+  componentDidMount() { requestAnimationFrame(() => this.setState({ pageOpacity: 1 })); }
+  goToOrgChart = (e) => {
+    e.preventDefault();
+    const url = e.currentTarget.href;
+    this.setState({ pageOpacity: 0 });
+    setTimeout(() => { window.location.href = url; }, 200);
+  };
+  stopProp = (e) => e.stopPropagation();
+  setQuery = (e) => this.setState({ query: e.target.value });
+  setDeptFilter = (v) => this.setState({ deptFilter: v });
+  setLocFilter = (v) => this.setState({ locFilter: v });
+  setStatusAll = () => this.setState({ statusFilter: 'All' });
+  setStatusActive = () => this.setState({ statusFilter: 'Active' });
+  setStatusLeave = () => this.setState({ statusFilter: 'On Leave' });
+
+  toggleSort(key) {
+    this.setState(s => ({ sortKey: key, sortDir: s.sortKey === key && s.sortDir === 'asc' ? 'desc' : 'asc' }));
+  }
+  sortByName = () => this.toggleSort('name');
+  sortByRole = () => this.toggleSort('role');
+  sortByDept = () => this.toggleSort('department');
+  sortBySalary = () => this.toggleSort('salary');
+  sortByHire = () => this.toggleSort('hireDate');
+
+  toggleSelectAll = (checked) => {
+    const visible = this.getFiltered();
+    if (checked) this.setState(s => ({ selected: Array.from(new Set([...s.selected, ...visible.map(v => v.id)])) }));
+    else { const ids = new Set(visible.map(v => v.id)); this.setState(s => ({ selected: s.selected.filter(id => !ids.has(id)) })); }
+  };
+  toggleSelect(id) {
+    this.setState(s => ({ selected: s.selected.includes(id) ? s.selected.filter(x => x !== id) : [...s.selected, id] }));
+  }
+  clearSelection = () => this.setState({ selected: [] });
+  bulkDeactivate = () => {
+    const sel = new Set(this.state.selected);
+    this.setState(s => ({ staff: s.staff.map(m => sel.has(m.id) ? { ...m, status: 'On Leave' } : m), selected: [] }));
+  };
+  bulkDelete = () => {
+    const sel = new Set(this.state.selected);
+    this.setState(s => ({ staff: s.staff.filter(m => !sel.has(m.id)), selected: [] }));
+  };
+
+  openDrawer(id) { this.setState({ drawerId: id, drawerTab: 'overview' }); }
+  closeDrawer = () => this.setState({ drawerId: null });
+  setTabOverview = () => this.setState({ drawerTab: 'overview' });
+  setTabSchedule = () => this.setState({ drawerTab: 'schedule' });
+  setTabComp = () => this.setState({ drawerTab: 'compensation' });
+
+  openAddModal = () => this.setState({ showAddModal: true });
+  closeAddModal = () => this.setState({
+    showAddModal: false, addName: '', addEmail: '', addRole: '', addDept: DEPARTMENTS[0],
+    addLoc: LOCATIONS[0], addStatus: 'Active', addSchedule: '', addHire: '', addSalary: '',
+  });
+  setAddName = (e) => this.setState({ addName: e.target.value });
+  setAddEmail = (e) => this.setState({ addEmail: e.target.value });
+  setAddRole = (e) => this.setState({ addRole: e.target.value });
+  setAddDept = (e) => this.setState({ addDept: e.target.value });
+  setAddLoc = (e) => this.setState({ addLoc: e.target.value });
+  setAddStatus = (e) => this.setState({ addStatus: e.target.value });
+  setAddSchedule = (e) => this.setState({ addSchedule: e.target.value });
+  setAddHire = (e) => this.setState({ addHire: e.target.value });
+  setAddSalary = (e) => this.setState({ addSalary: e.target.value });
+  submitAdd = () => {
+    const s = this.state;
+    if (!s.addName.trim()) return;
+    const newStaff = {
+      id: Date.now(), name: s.addName.trim(), email: s.addEmail.trim() || 'unknown@northlane.com',
+      phone: '\u2014', role: s.addRole.trim() || 'Staff', department: s.addDept, location: s.addLoc,
+      status: s.addStatus, schedule: s.addSchedule.trim() || '\u2014',
+      salary: Number(s.addSalary) || 0, hireDate: s.addHire || new Date().toISOString().slice(0, 10),
+    };
+    this.setState(prev => ({ staff: [newStaff, ...prev.staff] }));
+    this.closeAddModal();
+  };
+
+  getFiltered() {
+    const s = this.state;
+    const q = s.query.trim().toLowerCase();
+    return s.staff.filter(m =>
+      (s.deptFilter === 'All' || m.department === s.deptFilter) &&
+      (s.locFilter === 'All' || m.location === s.locFilter) &&
+      (s.statusFilter === 'All' || m.status === s.statusFilter) &&
+      (!q || m.name.toLowerCase().includes(q) || m.role.toLowerCase().includes(q) || m.email.toLowerCase().includes(q))
+    );
+  }
+
+  renderVals() {
+    const s = this.state;
+    const filtered = this.getFiltered();
+    const dir = s.sortDir === 'asc' ? 1 : -1;
+    const sorted = [...filtered].sort((a, b) => {
+      const av = a[s.sortKey], bv = b[s.sortKey];
+      if (typeof av === 'number') return (av - bv) * dir;
+      return String(av).localeCompare(String(bv)) * dir;
+    });
+
+    const rows = sorted.map((m, i) => {
+      const st = STATUS_STYLES[m.status] || STATUS_STYLES['Active'];
+      const isSelected = s.selected.includes(m.id);
+      return {
+        id: m.id, initials: initials(m.name), name: m.name, email: m.email, role: m.role,
+        department: m.department, location: m.location, schedule: m.schedule,
+        salaryDisplay: fmtSalary(m.salary), status: m.status, statusBg: st.bg, statusColor: st.color,
+        hireDateDisplay: fmtDate(m.hireDate), isSelected, rowBg: isSelected ? 'var(--colors-primitive-color-tokens-teal-50)' : (i % 2 ? 'var(--colors-primitive-color-tokens-neutrals-bkg-50)' : '#fff'),
+        openRow: () => this.openDrawer(m.id),
+        toggleSelect: () => this.toggleSelect(m.id),
+      };
+    });
+
+    const arrow = (key) => s.sortKey === key ? (s.sortDir === 'asc' ? '\u2191' : '\u2193') : '';
+    const drawerMember = s.drawerId ? s.staff.find(m => m.id === s.drawerId) : null;
+    const drawerSt = drawerMember ? (STATUS_STYLES[drawerMember.status] || STATUS_STYLES['Active']) : { bg: '', color: '' };
+
+    const deptOptions = [{ value: 'All', label: 'All Departments' }, ...DEPARTMENTS.map(d => ({ value: d, label: d }))];
+    const locOptions = [{ value: 'All', label: 'All Locations' }, ...LOCATIONS.map(l => ({ value: l, label: l }))];
+    const deptSelectOptions = DEPARTMENTS.map(d => ({ value: d, label: d }));
+    const locSelectOptions = LOCATIONS.map(l => ({ value: l, label: l }));
+
+    const visibleIds = filtered.map(m => m.id);
+    const allSelected = visibleIds.length > 0 && visibleIds.every(id => s.selected.includes(id));
+
+    return {
+      pageOpacity: s.pageOpacity, goToOrgChart: this.goToOrgChart,
+      enterpriseOptions: [{ value: 'northlane', label: 'Northlane Retail Group' }],
+      productOptions: [{ value: 'staff-management', label: 'Staff Management' }],
+      totalStaff: s.staff.length,
+      activeCount: s.staff.filter(m => m.status === 'Active').length,
+      onLeaveCount: s.staff.filter(m => m.status === 'On Leave').length,
+      deptCount: DEPARTMENTS.length,
+      locCount: LOCATIONS.length,
+      hasSelection: s.selected.length > 0,
+      selectedCount: s.selected.length,
+      clearSelection: this.clearSelection, bulkDeactivate: this.bulkDeactivate, bulkDelete: this.bulkDelete,
+      query: s.query, setQuery: this.setQuery,
+      deptOptions, locOptions, deptFilter: s.deptFilter, locFilter: s.locFilter,
+      setDeptFilter: this.setDeptFilter, setLocFilter: this.setLocFilter,
+      statusAllSel: s.statusFilter === 'All', statusActiveSel: s.statusFilter === 'Active', statusLeaveSel: s.statusFilter === 'On Leave',
+      setStatusAll: this.setStatusAll, setStatusActive: this.setStatusActive, setStatusLeave: this.setStatusLeave,
+      sortByName: this.sortByName, sortByRole: this.sortByRole, sortByDept: this.sortByDept, sortBySalary: this.sortBySalary, sortByHire: this.sortByHire,
+      arrowName: arrow('name'), arrowRole: arrow('role'), arrowDept: arrow('department'), arrowSalary: arrow('salary'), arrowHire: arrow('hireDate'),
+      allSelected, toggleSelectAll: this.toggleSelectAll,
+      rows, rowCount: rows.length, stopProp: this.stopProp,
+      drawerOpen: !!drawerMember,
+      drawerInitials: drawerMember ? initials(drawerMember.name) : '',
+      drawerName: drawerMember ? drawerMember.name : '',
+      drawerRole: drawerMember ? drawerMember.role : '',
+      drawerDept: drawerMember ? drawerMember.department : '',
+      drawerLocation: drawerMember ? drawerMember.location : '',
+      drawerEmail: drawerMember ? drawerMember.email : '',
+      drawerPhone: drawerMember ? drawerMember.phone : '',
+      drawerHireDateDisplay: drawerMember ? fmtDate(drawerMember.hireDate) : '',
+      drawerSchedule: drawerMember ? drawerMember.schedule : '',
+      drawerSalaryDisplay: drawerMember ? fmtSalary(drawerMember.salary) : '',
+      drawerStatus: drawerMember ? drawerMember.status : '',
+      drawerStatusBg: drawerSt.bg, drawerStatusColor: drawerSt.color,
+      closeDrawer: this.closeDrawer,
+      isTabOverview: s.drawerTab === 'overview', isTabSchedule: s.drawerTab === 'schedule', isTabComp: s.drawerTab === 'compensation',
+      setTabOverview: this.setTabOverview, setTabSchedule: this.setTabSchedule, setTabComp: this.setTabComp,
+      tabOverviewColor: s.drawerTab === 'overview' ? 'var(--colors-primitive-color-tokens-teal-800)' : 'var(--colors-primitive-color-tokens-neutrals-bkg-600)',
+      tabOverviewBorder: s.drawerTab === 'overview' ? 'var(--colors-primitive-color-tokens-teal-700)' : 'transparent',
+      tabScheduleColor: s.drawerTab === 'schedule' ? 'var(--colors-primitive-color-tokens-teal-800)' : 'var(--colors-primitive-color-tokens-neutrals-bkg-600)',
+      tabScheduleBorder: s.drawerTab === 'schedule' ? 'var(--colors-primitive-color-tokens-teal-700)' : 'transparent',
+      tabCompColor: s.drawerTab === 'compensation' ? 'var(--colors-primitive-color-tokens-teal-800)' : 'var(--colors-primitive-color-tokens-neutrals-bkg-600)',
+      tabCompBorder: s.drawerTab === 'compensation' ? 'var(--colors-primitive-color-tokens-teal-700)' : 'transparent',
+      showAddModal: s.showAddModal, openAddModal: this.openAddModal, closeAddModal: this.closeAddModal, submitAdd: this.submitAdd,
+      addName: s.addName, addEmail: s.addEmail, addRole: s.addRole, addDept: s.addDept, addLoc: s.addLoc, addStatus: s.addStatus,
+      addSchedule: s.addSchedule, addHire: s.addHire, addSalary: s.addSalary,
+      setAddName: this.setAddName, setAddEmail: this.setAddEmail, setAddRole: this.setAddRole, setAddDept: this.setAddDept,
+      setAddLoc: this.setAddLoc, setAddStatus: this.setAddStatus, setAddSchedule: this.setAddSchedule, setAddHire: this.setAddHire, setAddSalary: this.setAddSalary,
+      deptSelectOptions, locSelectOptions,
+    };
+  }
+}
+</script>
+</body>
+</html>
