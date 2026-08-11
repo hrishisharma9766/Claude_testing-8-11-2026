@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Org Chart &amp; Permissions · Northlane Retail Group</title>
+<link rel="stylesheet" href="assets/theme.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Archivo:wght@100&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div id="app" class="page">
+
+  <nav class="topnav" data-screen-label="Org Chart and Permissions">
+    <a href="index.html" id="navStaffDirectory" class="nav-pill">Staff Directory</a>
+    <span class="nav-pill nav-pill--active">Org Chart &amp; Permissions</span>
+  </nav>
+
+  <main class="main">
+
+    <header class="page-header-simple">
+      <h1 class="page-title">Org Chart &amp; Permissions</h1>
+      <p class="page-subtitle">Reporting structure and role-based access for Northlane Retail Group</p>
+    </header>
+
+    <div class="page-tabs">
+      <button class="page-tab" data-tab="org" type="button">Org Chart</button>
+      <button class="page-tab" data-tab="permissions" type="button">Roles &amp; Permissions</button>
+    </div>
+
+    <section id="orgChartPane" class="org-card">
+      <div class="org-tree">
+        <div class="org-node org-node--brand">
+          <div class="org-node__name" id="ceoName"></div>
+          <div class="org-node__title org-node__title--brand" id="ceoTitle"></div>
+        </div>
+        <div class="org-connector org-connector--v"></div>
+        <div class="org-connector org-connector--h"></div>
+        <div class="org-row" id="directorsRow"></div>
+      </div>
+    </section>
+
+    <section id="permissionsPane" class="table-card" hidden>
+      <div class="table-scroll">
+        <table class="staff-table perm-table">
+          <thead>
+            <tr>
+              <th class="perm-role-col">Role</th>
+              <!-- permission column headers injected by JS -->
+            </tr>
+          </thead>
+          <tbody id="permBody"></tbody>
+        </table>
+      </div>
+      <div class="table-footer table-footer--note">Toggle checkboxes to grant or revoke a permission for the role. Changes apply to all staff assigned that role.</div>
+    </section>
+
+  </main>
+
+</div>
+<script src="assets/org-chart.js"></script>
+</body>
+</html>

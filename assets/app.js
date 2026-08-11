@@ -442,6 +442,16 @@
     modalOverlay.hidden = !state.showAddModal;
   }
 
+  var navOrgChart = $('navOrgChart');
+  if (navOrgChart) {
+    navOrgChart.addEventListener('click', function (e) {
+      e.preventDefault();
+      var url = navOrgChart.href;
+      pageEl.classList.remove('is-visible');
+      setTimeout(function () { window.location.href = url; }, 200);
+    });
+  }
+
   requestAnimationFrame(function () { pageEl.classList.add('is-visible'); });
   render();
 })();
