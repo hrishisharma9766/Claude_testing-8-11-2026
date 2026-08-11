@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Staff Directory · Northlane Retail Group</title>
+<link rel="stylesheet" href="assets/theme.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Archivo:wght@100&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div id="app" class="page">
+
+  <nav class="topnav" data-screen-label="Staff Directory">
+    <span class="nav-pill nav-pill--active">Staff Directory</span>
+    <span class="nav-pill nav-pill--disabled" title="Coming soon">Org Chart &amp; Permissions</span>
+  </nav>
+
+  <main class="main">
+
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">Staff Directory</h1>
+        <p class="page-subtitle" id="summaryLine"></p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn--outline" type="button" id="exportBtn">Export</button>
+        <button class="btn btn--solid" type="button" id="addStaffBtn">+ Add Staff</button>
+      </div>
+    </header>
+
+    <section class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-card__label">Total Staff</div>
+        <div class="stat-card__value" id="statTotal">0</div>
+      </div>
+      <div class="stat-card stat-card--teal">
+        <div class="stat-card__label">Active</div>
+        <div class="stat-card__value" id="statActive">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__label">On Leave</div>
+        <div class="stat-card__value stat-card__value--orange" id="statLeave">0</div>
+      </div>
+      <div class="stat-card stat-card--fuscia">
+        <div class="stat-card__label">Departments</div>
+        <div class="stat-card__value" id="statDept">0</div>
+      </div>
+    </section>
+
+    <div class="bulk-bar" id="bulkBar" hidden>
+      <span class="bulk-bar__count" id="bulkCount">0 selected</span>
+      <div class="bulk-bar__actions">
+        <button class="btn btn--ghost-dark" type="button" id="bulkLeaveBtn">Mark On Leave</button>
+        <button class="btn btn--danger" type="button" id="bulkDeleteBtn">Remove</button>
+        <button class="btn btn--ghost-dark" type="button" id="bulkClearBtn">Clear</button>
+      </div>
+    </div>
+
+    <section class="toolbar">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 21 21" fill="none" stroke="var(--colors-primitive-color-tokens-neutrals-bkg-600)" stroke-width="1.7"><circle cx="9" cy="9" r="6.5"></circle><path d="M14 14l5 5"></path></svg>
+        <input type="text" id="searchInput" placeholder="Search by name, role, or email&hellip;" autocomplete="off">
+      </div>
+      <div id="deptDropdown" class="dd" style="width:180px;"></div>
+      <div id="locDropdown" class="dd" style="width:170px;"></div>
+      <div class="filter-group">
+        <button class="filter-btn" data-status="All" type="button">All</button>
+        <button class="filter-btn" data-status="Active" type="button">Active</button>
+        <button class="filter-btn" data-status="On Leave" type="button">On Leave</button>
+      </div>
+    </section>
+
+    <div class="table-card">
+      <div class="table-scroll">
+        <table class="staff-table">
+          <thead>
+            <tr>
+              <th class="col-check"><label class="checkbox"><input type="checkbox" id="selectAllCheckbox"></label></th>
+              <th class="sortable" data-sort="name">Name <span class="arrow" data-arrow="name"></span></th>
+              <th class="sortable" data-sort="role">Role <span class="arrow" data-arrow="role"></span></th>
+              <th class="sortable" data-sort="department">Department <span class="arrow" data-arrow="department"></span></th>
+              <th>Location</th>
+              <th>Schedule</th>
+              <th class="sortable align-right" data-sort="salary">Salary <span class="arrow" data-arrow="salary"></span></th>
+              <th>Status</th>
+              <th class="sortable" data-sort="hireDate">Hired <span class="arrow" data-arrow="hireDate"></span></th>
+              <th class="col-view"></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <span id="rowCountLine">Showing 0 of 0</span>
+        <span>Northlane Retail Group</span>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="overlay" id="drawerOverlay" hidden></div>
+  <aside class="drawer" id="drawer" hidden>
+    <div class="drawer__head">
+      <div class="drawer__who">
+        <span class="avatar avatar--lg" id="drawerInitials"></span>
+        <div>
+          <div class="drawer__name" id="drawerName"></div>
+          <div class="drawer__role" id="drawerRole"></div>
+        </div>
+      </div>
+      <button class="icon-btn" id="drawerCloseBtn" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="drawer__tabs">
+      <button class="drawer-tab" data-tab="overview" type="button">Overview</button>
+      <button class="drawer-tab" data-tab="schedule" type="button">Schedule</button>
+      <button class="drawer-tab" data-tab="compensation" type="button">Compensation</button>
+    </div>
+    <div class="drawer__body" id="drawerBody"></div>
+  </aside>
+
+  <div class="overlay overlay--modal" id="modalOverlay" hidden>
+    <div class="modal" id="addModal">
+      <h2 class="modal__title">Add Staff</h2>
+      <p class="modal__subtitle">Add a new team member to the directory.</p>
+      <div class="modal__grid">
+        <label class="field field--span2">Full name
+          <input type="text" id="addName" placeholder="Jordan Blake">
+        </label>
+        <label class="field field--span2">Email
+          <input type="text" id="addEmail" placeholder="jordan.blake@northlane.com">
+        </label>
+        <label class="field">Role / Title
+          <input type="text" id="addRole" placeholder="Sales Associate">
+        </label>
+        <label class="field">Department
+          <select id="addDept"></select>
+        </label>
+        <label class="field">Location
+          <select id="addLoc"></select>
+        </label>
+        <label class="field">Status
+          <select id="addStatus">
+            <option value="Active">Active</option>
+            <option value="On Leave">On Leave</option>
+          </select>
+        </label>
+        <label class="field">Schedule / Shift
+          <input type="text" id="addSchedule" placeholder="Mon&ndash;Fri, 9am&ndash;5pm">
+        </label>
+        <label class="field">Hire date
+          <input type="date" id="addHire">
+        </label>
+        <label class="field">Annual salary
+          <input type="text" id="addSalary" placeholder="55000">
+        </label>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--outline" type="button" id="addCancelBtn">Cancel</button>
+        <button class="btn btn--solid" type="button" id="addSaveBtn">Save Staff</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>
