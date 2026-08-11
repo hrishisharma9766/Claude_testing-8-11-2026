@@ -8,7 +8,8 @@
     { id: 'ops', name: 'Priya Nair', title: 'Director, Operations', teamSize: 6 },
     { id: 'support', name: 'Grace Okafor', title: 'Director, Customer Support', teamSize: 2 },
     { id: 'finance', name: 'Ben Kowalski', title: 'Director, Finance', teamSize: 2 },
-    { id: 'it', name: 'Hrishi Patel', title: 'Director, IT & Systems', teamSize: 3 }
+    { id: 'it', name: 'Hrishi Patel', title: 'Director, IT & Systems', teamSize: 3 },
+    { id: 'hr', name: 'Sarah Klein', title: 'Director, HR', teamSize: 2 }
   ];
 
   var PERMISSION_COLS = ['View Staff', 'Edit Staff', 'Add/Remove Staff', 'View Salary', 'Manage Schedules', 'Export Reports'];
